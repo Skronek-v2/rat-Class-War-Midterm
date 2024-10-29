@@ -1,0 +1,655 @@
+Here's a website that interacts with a smart contract: LithiumReservoir.sol
+
+can you update the web page to interact with the LithiumReservoir Contract. You should be able to connect your metamask wallet and purchase lithium.
+
+do the following:
+
+Specifications for each page:
+Use ethers.js v6.7. Import the library from this src: https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js
+When initializing the provider, do the following: provider = new ethers.BrowserProvider(window.ethereum);
+When initializing the signer, do the following: signer = await provider.getSigner();
+
+
+here's the contract:
+
+LithiumReservoir.sol:
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract LithiumReservoir {
+    uint256 public constant maxDailyLithium = 5; // Max lithium claimable per day
+    uint256 public constant lithiumPerClaim = 1; // Lithium claimable per transaction
+    mapping(address => uint256) public userLithiumBalance; // Tracks each user's lithium
+    mapping(address => uint256) public lastClaimedTime; // Tracks last claim time for each user
+    mapping(address => uint256) public dailyClaimedAmount; // Tracks daily claimed lithium
+
+    event LithiumClaimed(address indexed user, uint256 amount);
+
+    // Claim 1 Lithium (up to 5 per day)
+    function claimLithium() external {
+        require(canClaim(msg.sender), "You can only claim up to 5 Lithium per day.");
+        userLithiumBalance[msg.sender] += lithiumPerClaim;
+        dailyClaimedAmount[msg.sender] += lithiumPerClaim;
+        lastClaimedTime[msg.sender] = block.timestamp;
+        emit LithiumClaimed(msg.sender, lithiumPerClaim);
+    }
+
+    // Check if the user can claim more lithium today (up to 5 daily)
+    function canClaim(address user) public view returns (bool) {
+        if (block.timestamp >= lastClaimedTime[user] + 1 days) {
+            return true;
+        }
+        return dailyClaimedAmount[user] < maxDailyLithium;
+    }
+
+    // Reset daily claim tracking after 24 hours
+    function resetDailyClaims(address user) internal {
+        if (block.timestamp >= lastClaimedTime[user] + 1 days) {
+            dailyClaimedAmount[user] = 0;
+        }
+    }
+
+    // Transfer lithium to another contract (called by WorldWarRats)
+    function transferLithium(address from, uint256 amount) external {
+        require(userLithiumBalance[from] >= amount, "Not enough Lithium.");
+        userLithiumBalance[from] -= amount;
+    }
+
+    // Get user's lithium balance
+    function getUserLithiumBalance(address user) external view returns (uint256) {
+        return userLithiumBalance[user];
+    }
+}
+
+
+here's the web page:
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lithium Reservoir</title>
+    <!-- Ethers.js v6.7 CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('backgroundField.png');
+            /* Updated background image */
+            background-size: cover;
+            background-position: center;
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #app {
+            background-color: rgba(0, 0, 0, 0.7);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Connect Wallet Section */
+        #connectSection {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #connectWallet {
+            background-color: #f6851b;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        #connectWallet:hover {
+            background-color: #d97700;
+        }
+
+        /* Hidden State */
+        .hidden {
+            display: none;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 100%;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        h1 .emoji {
+            margin-right: 10px;
+            font-size: 2.5rem;
+        }
+
+        /* Top-Left Lithium Section */
+        .top-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .top-left img {
+            width: 80px;
+            height: 80px;
+            margin-right: 10px;
+        }
+
+        .top-left .count {
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        /* Rat Czar and Citizen Section */
+        .middle-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        .middle-section .entity {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .middle-section .entity img {
+            width: 120px;
+            height: 120px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .middle-section .entity img:hover {
+            transform: scale(1.1);
+        }
+
+        .middle-section .entity .count {
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Straw Buttons Container - Positioned at Bottom */
+        .straw-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .straw-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .straw-button img {
+            width: 60px;
+            height: 60px;
+            transition: transform 0.2s;
+        }
+
+        .straw-button img:hover {
+            transform: scale(1.1);
+        }
+
+        .straw-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .straw-section .count {
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        #lithiumImage {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 100px;
+            height: 100px;
+        }
+
+        #messages {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #0f0;
+            z-index: 5;
+        }
+
+        /* Remove white border from Citizen button */
+        #citizenButton {
+            border: none;
+            outline: none;
+            box-shadow: none;
+            background: none;
+            /* Ensure background is none */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .straw-button img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .top-left img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .count {
+                font-size: 1rem;
+            }
+
+            #messages {
+                font-size: 1.2rem;
+            }
+
+            #connectWallet {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+
+            .middle-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .middle-section .entity img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .straw-section {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Connect Wallet Section -->
+        <div id="connectSection">
+            <h2>Welcome to Lithium Reservoir</h2>
+            <p>Please connect your MetaMask wallet to start interacting.</p>
+            <button id="connectWallet">Connect MetaMask</button>
+        </div>
+
+        <!-- Main Content -->
+        <main>
+            <h1><span class="emoji">🌾</span> Lithium Reservoir</h1>
+
+            <!-- Top-Left Lithium Section -->
+            <div class="top-left">
+                <img src="lithium.png" alt="Lithium">
+                <div class="count" id="lithiumCount">Lithium Count: 0</div>
+            </div>
+
+            <!-- Rat Czar and Citizen Section -->
+            <div class="middle-section">
+                <!-- Rat Czar Entity -->
+                <div class="entity">
+                    <img src="ratCzar.png" alt="Rat Czar" id="ratCzar" title="Rat Czar">
+                    <div class="count" id="czarLithium">Czar Lithium: 0</div>
+                </div>
+
+                <!-- Citizen Entity -->
+                <div class="entity">
+                    <img src="citizen.png" alt="Citizen" id="citizenButton" title="Citizen">
+                    <div class="count" id="citLithium">Citizen Lithium: 0</div>
+                </div>
+            </div>
+
+            <!-- Straw Buttons Section - Positioned at Bottom -->
+            <div class="straw-section">
+                <div class="straw-buttons">
+                    <!-- 7 Straw Buttons -->
+                    <button class="straw-button" title="Straw 1">
+                        <img src="straw.png" alt="Straw 1">
+                    </button>
+                    <button class="straw-button" title="Straw 2">
+                        <img src="straw.png" alt="Straw 2">
+                    </button>
+                    <button class="straw-button" title="Straw 3">
+                        <img src="straw.png" alt="Straw 3">
+                    </button>
+                    <button class="straw-button" title="Straw 4">
+                        <img src="straw.png" alt="Straw 4">
+                    </button>
+                    <button class="straw-button" title="Straw 5">
+                        <img src="straw.png" alt="Straw 5">
+                    </button>
+                    <button class="straw-button" title="Straw 6">
+                        <img src="straw.png" alt="Straw 6">
+                    </button>
+                    <button class="straw-button" title="Straw 7">
+                        <img src="straw.png" alt="Straw 7">
+                    </button>
+                </div>
+                <!-- Lithium Count is displayed at top-left, so no need to display here -->
+            </div>
+
+            <img src="lithium.png" alt="Lithium" id="lithiumImage">
+
+            <div id="messages"></div>
+        </main>
+    </div>
+
+    <script>
+        // Smart Contract ABIs and Addresses
+        const lithiumReservoirABI = []
+
+
+        const worldWarRatABI = []
+
+
+        const lithiumReservoirAddress = "0x677932f795E08a8e8525a0f0F7042498de2b55D9"; // Replace with your LithiumReservoir.sol contract address
+        const worldWarRatAddress = "0x2b14e3Ad91351CaDca3Caf12272A3c70F89D50FC"; // Replace with your WorldWarRat.sol contract address
+
+        let provider;
+        let signer;
+        let lithiumReservoirContract;
+        let worldWarRatContract;
+
+        // Variables to manage counts
+        let lithiumCount = 0;
+        let czarLithium = 0;
+        let citLithium = 0;
+        let worldWarRatCount = 0; // Example variable for WorldWarRat.sol
+
+        // DOM Elements
+        const connectWalletButton = document.getElementById('connectWallet');
+        const connectSection = document.getElementById('connectSection');
+        const mainContent = document.querySelector('main');
+        const strawButtons = document.querySelectorAll('.straw-button');
+        const lithiumCountDisplay = document.getElementById('lithiumCount');
+        const lithiumImage = document.getElementById('lithiumImage');
+        const ratCzar = document.getElementById('ratCzar');
+        const czarLithiumDisplay = document.getElementById('czarLithium');
+        const citizenButton = document.getElementById('citizenButton');
+        const citLithiumDisplay = document.getElementById('citLithium');
+        const messagesDiv = document.getElementById('messages');
+
+        // Function to hide connect section after connection
+        function hideConnectSection() {
+            connectSection.classList.add('hidden');
+        }
+
+        // Function to show messages
+        function showMessage(message) {
+            messagesDiv.innerText = message;
+            setTimeout(() => {
+                messagesDiv.innerText = "";
+            }, 3000);
+        }
+
+        // Function to show Lithium Pop Animation
+        function showLithiumPop() {
+            // Create Lithium Image Pop
+            const popImg = document.createElement('img');
+            popImg.src = 'lithium.png'; // Ensure this path is correct
+            popImg.alt = 'Lithium Pop';
+            popImg.style.position = 'absolute';
+            popImg.style.top = '50%';
+            popImg.style.left = '50%';
+            popImg.style.transform = 'translate(-50%, -50%)';
+            popImg.style.width = '100px';
+            popImg.style.height = '100px';
+            popImg.style.opacity = '0';
+            popImg.style.transition = 'opacity 0.5s ease';
+            popImg.style.zIndex = '5';
+            document.body.appendChild(popImg);
+
+            // Fade In
+            setTimeout(() => {
+                popImg.style.opacity = '1';
+            }, 100);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                popImg.remove();
+            }, 3000);
+
+            // Show "Yay lithium!" Message
+            showMessage("Yay lithium!");
+        }
+
+        // Function to connect to MetaMask
+        async function connectWallet() {
+            if (window.ethereum) {
+                try {
+                    provider = new ethers.BrowserProvider(window.ethereum); // Updated Provider Initialization
+                    await provider.send("eth_requestAccounts", []); // Request account access
+                    signer = await provider.getSigner(); // Updated Signer Initialization
+
+                    // Initialize Contracts
+                    lithiumReservoirContract = new ethers.Contract(lithiumReservoirAddress, lithiumReservoirABI, signer);
+                    worldWarRatContract = new ethers.Contract(worldWarRatAddress, worldWarRatABI, signer);
+
+                    hideConnectSection();
+                    showMessage("Wallet connected!");
+                } catch (error) {
+                    console.error("Error connecting to MetaMask:", error);
+                    alert("Failed to connect to MetaMask.");
+                }
+            } else {
+                alert("Please install MetaMask!");
+            }
+        }
+
+        // Function to check if already connected on page load
+        async function checkIfConnected() {
+            if (window.ethereum) {
+                try {
+                    provider = new ethers.BrowserProvider(window.ethereum); // Updated Provider Initialization
+                    const accounts = await provider.send("eth_accounts", []);
+                    if (accounts.length > 0) {
+                        signer = await provider.getSigner(); // Updated Signer Initialization
+
+                        // Initialize Contracts
+                        lithiumReservoirContract = new ethers.Contract(lithiumReservoirAddress, lithiumReservoirABI, signer);
+                        worldWarRatContract = new ethers.Contract(worldWarRatAddress, worldWarRatABI, signer);
+
+                        hideConnectSection();
+                        showMessage("Wallet connected!");
+                    }
+                } catch (error) {
+                    console.error("Error checking connection:", error);
+                }
+            }
+        }
+
+        // Event Listeners
+        connectWalletButton.addEventListener('click', connectWallet);
+
+        // Functionality for Straw Buttons
+        async function handleStrawClick() {
+            if (!lithiumReservoirContract) {
+                alert("Please connect your MetaMask wallet first.");
+                return;
+            }
+            try {
+                const tx = await lithiumReservoirContract.straw();
+                await tx.wait();
+                lithiumCount += 1;
+                updateLithiumCount();
+                showLithiumPop();
+            } catch (error) {
+                console.error("Error interacting with straw:", error);
+                alert("Transaction failed. See console for details.");
+            }
+        }
+
+        strawButtons.forEach(button => {
+            button.addEventListener('click', handleStrawClick);
+        });
+
+        // Functionality for Rat Czar
+        async function handleRatCzarClick() {
+            if (!lithiumReservoirContract) {
+                alert("Please connect your MetaMask wallet first.");
+                return;
+            }
+            if (lithiumCount >= 1) {
+                try {
+                    const tx = await lithiumReservoirContract.ratCzar();
+                    await tx.wait();
+                    czarLithium += 1;
+                    updateCzarLithium();
+                    lithiumCount -= 1;
+                    updateLithiumCount();
+                    showMessage("Czar Lithium increased!");
+                } catch (error) {
+                    console.error("Error interacting with ratCzar:", error);
+                    alert("Transaction failed. See console for details.");
+                }
+            } else {
+                alert("Not enough Lithium Count.");
+            }
+        }
+
+        ratCzar.addEventListener('click', handleRatCzarClick);
+
+        // Functionality for Citizen
+        async function handleCitizenClick() {
+            if (!lithiumReservoirContract) {
+                alert("Please connect your MetaMask wallet first.");
+                return;
+            }
+            if (lithiumCount >= 1) {
+                try {
+                    const tx = await lithiumReservoirContract.citizen();
+                    await tx.wait();
+                    citLithium += 1;
+                    updateCitLithium();
+                    lithiumCount -= 1;
+                    updateLithiumCount();
+                    showMessage("Citizen Lithium increased!");
+                } catch (error) {
+                    console.error("Error interacting with citizen:", error);
+                    alert("Transaction failed. See console for details.");
+                }
+            } else {
+                alert("Not enough Lithium Count.");
+            }
+        }
+
+        citizenButton.addEventListener('click', handleCitizenClick);
+
+        // Example Functionality for WorldWarRat.sol
+        // You can add buttons or other UI elements to interact with WorldWarRat.sol as needed
+        // Example: Attack Button (Assuming you have an attack button in your HTML)
+        /*
+        const attackButton = document.getElementById('attackButton');
+        attackButton.addEventListener('click', async () => {
+            if (!worldWarRatContract) {
+                alert("Please connect your MetaMask wallet first.");
+                return;
+            }
+            try {
+                const tx = await worldWarRatContract.attack();
+                await tx.wait();
+                worldWarRatCount += 1;
+                // Update corresponding UI element
+                showMessage("You attacked the rats!");
+            } catch (error) {
+                console.error("Error interacting with attack:", error);
+                alert("Transaction failed. See console for details.");
+            }
+        });
+        */
+
+        // Update Display Functions
+        function updateLithiumCount() {
+            lithiumCountDisplay.innerText = `Lithium Count: ${lithiumCount}`;
+        }
+
+        function updateCzarLithium() {
+            czarLithiumDisplay.innerText = `Czar Lithium: ${czarLithium}`;
+        }
+
+        function updateCitLithium() {
+            citLithiumDisplay.innerText = `Citizen Lithium: ${citLithium}`;
+        }
+
+        // Reset lithiumCount every 24 hours
+        setInterval(() => {
+            lithiumCount = 0;
+            updateLithiumCount();
+            showMessage("Lithium Count has been reset!");
+        }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+
+        // Initial Display Update
+        updateLithiumCount();
+        updateCzarLithium();
+        updateCitLithium();
+
+        // Check if already connected on page load
+        window.addEventListener('load', checkIfConnected);
+    </script>
+</body>
+
+</html>

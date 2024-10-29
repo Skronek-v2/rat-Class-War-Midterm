@@ -18,7 +18,6 @@
         body {
             font-family: Arial, sans-serif;
             background-image: url('backgroundField.png');
-            /* Updated background image */
             background-size: cover;
             background-position: center;
             color: #ffffff;
@@ -37,10 +36,9 @@
             position: relative;
         }
 
-        /* Connect Wallet Section */
         #connectSection {
             position: absolute;
-            top: 50%;
+            top: 90%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10;
@@ -70,12 +68,10 @@
             background-color: #d97700;
         }
 
-        /* Hidden State */
         .hidden {
             display: none;
         }
 
-        /* Main Content */
         main {
             flex: 1;
             display: flex;
@@ -99,7 +95,6 @@
             font-size: 2.5rem;
         }
 
-        /* Top-Left Lithium Section */
         .top-left {
             position: absolute;
             top: 20px;
@@ -119,7 +114,6 @@
             text-align: center;
         }
 
-        /* Rat Czar and Citizen Section */
         .middle-section {
             display: flex;
             align-items: center;
@@ -145,15 +139,8 @@
             transform: scale(1.1);
         }
 
-        .middle-section .entity .count {
-            margin-top: 10px;
-            font-size: 1.2rem;
-        }
-
-        /* Straw Buttons Container - Positioned at Bottom */
         .straw-buttons {
             display: flex;
-            flex-wrap: wrap;
             gap: 10px;
             justify-content: center;
             margin-top: 20px;
@@ -163,7 +150,6 @@
             background: none;
             border: none;
             cursor: pointer;
-            position: relative;
         }
 
         .straw-button img {
@@ -175,88 +161,6 @@
         .straw-button img:hover {
             transform: scale(1.1);
         }
-
-        .straw-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 40px;
-        }
-
-        .straw-section .count {
-            margin-top: 10px;
-            font-size: 1.2rem;
-        }
-
-        #lithiumImage {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 100px;
-            height: 100px;
-        }
-
-        #messages {
-            position: absolute;
-            bottom: 20px;
-            text-align: center;
-            font-size: 1.5rem;
-            color: #0f0;
-            z-index: 5;
-        }
-
-        /* Remove white border from Citizen button */
-        #citizenButton {
-            border: none;
-            outline: none;
-            box-shadow: none;
-            background: none;
-            /* Ensure background is none */
-        }
-
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            .straw-button img {
-                width: 50px;
-                height: 50px;
-            }
-
-            .top-left img {
-                width: 60px;
-                height: 60px;
-            }
-
-            .count {
-                font-size: 1rem;
-            }
-
-            #messages {
-                font-size: 1.2rem;
-            }
-
-            #connectWallet {
-                padding: 10px 20px;
-                font-size: 1rem;
-            }
-
-            .middle-section {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .middle-section .entity img {
-                width: 100px;
-                height: 100px;
-            }
-
-            .straw-section {
-                margin-top: 20px;
-            }
-        }
     </style>
 </head>
 
@@ -267,533 +171,82 @@
             <h2>Welcome to Lithium Reservoir</h2>
             <p>Please connect your MetaMask wallet to start interacting.</p>
             <button id="connectWallet">Connect MetaMask</button>
+            <div id="connectedAddress" class="hidden" style="font-size: 1rem; margin-bottom: 10px;">
+                Connected: <span id="userAddress"></span>
+            </div>
         </div>
-
         <!-- Main Content -->
         <main>
             <h1><span class="emoji">🌾</span> Lithium Reservoir</h1>
 
-            <!-- Top-Left Lithium Section -->
             <div class="top-left">
                 <img src="lithium.png" alt="Lithium">
                 <div class="count" id="lithiumCount">Lithium Count: 0</div>
             </div>
 
-            <!-- Rat Czar and Citizen Section -->
             <div class="middle-section">
-                <!-- Rat Czar Entity -->
                 <div class="entity">
                     <img src="ratCzar.png" alt="Rat Czar" id="ratCzar" title="Rat Czar">
                     <div class="count" id="czarLithium">Czar Lithium: 0</div>
                 </div>
-
-                <!-- Citizen Entity -->
                 <div class="entity">
                     <img src="citizen.png" alt="Citizen" id="citizenButton" title="Citizen">
                     <div class="count" id="citLithium">Citizen Lithium: 0</div>
                 </div>
             </div>
 
-            <!-- Straw Buttons Section - Positioned at Bottom -->
-            <div class="straw-section">
-                <div class="straw-buttons">
-                    <!-- 7 Straw Buttons -->
-                    <button class="straw-button" title="Straw 1">
-                        <img src="straw.png" alt="Straw 1">
-                    </button>
-                    <button class="straw-button" title="Straw 2">
-                        <img src="straw.png" alt="Straw 2">
-                    </button>
-                    <button class="straw-button" title="Straw 3">
-                        <img src="straw.png" alt="Straw 3">
-                    </button>
-                    <button class="straw-button" title="Straw 4">
-                        <img src="straw.png" alt="Straw 4">
-                    </button>
-                    <button class="straw-button" title="Straw 5">
-                        <img src="straw.png" alt="Straw 5">
-                    </button>
-                    <button class="straw-button" title="Straw 6">
-                        <img src="straw.png" alt="Straw 6">
-                    </button>
-                    <button class="straw-button" title="Straw 7">
-                        <img src="straw.png" alt="Straw 7">
-                    </button>
-                </div>
-                <!-- Lithium Count is displayed at top-left, so no need to display here -->
+            <h2>Click to Give</h2>
+
+            <div class="straw-buttons">
+                <button class="straw-button" title="Straw 1">
+                    <img src="straw.png" alt="Straw 1">
+                </button>
+                <button class="straw-button" title="Straw 2">
+                    <img src="straw.png" alt="Straw 2">
+                </button>
+                <button class="straw-button" title="Straw 3">
+                    <img src="straw.png" alt="Straw 3">
+                </button>
+                <button class="straw-button" title="Straw 4">
+                    <img src="straw.png" alt="Straw 4">
+                </button>
+                <button class="straw-button" title="Straw 5">
+                    <img src="straw.png" alt="Straw 5">
+                </button>
+                <button class="straw-button" title="Straw 6">
+                    <img src="straw.png" alt="Straw 6">
+                </button>
+                <button class="straw-button" title="Straw 7">
+                    <img src="straw.png" alt="Straw 7">
+                </button>
             </div>
 
-            <img src="lithium.png" alt="Lithium" id="lithiumImage">
-
+            
             <div id="messages"></div>
         </main>
     </div>
 
     <script>
-        // Smart Contract ABIs and Addresses
-        const lithiumReservoirABI = [
-            {
-                "inputs": [],
-                "name": "claimLithium",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "user",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "LithiumClaimed",
-                "type": "event"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "from",
-                        "type": "address"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "transferLithium",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "user",
-                        "type": "address"
-                    }
-                ],
-                "name": "canClaim",
-                "outputs": [
-                    {
-                        "internalType": "bool",
-                        "name": "",
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "name": "dailyClaimedAmount",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "user",
-                        "type": "address"
-                    }
-                ],
-                "name": "getUserLithiumBalance",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "name": "lastClaimedTime",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "lithiumPerClaim",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "maxDailyLithium",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "name": "userLithiumBalance",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            }
-        ]
-
-
-        const worldWarRatABI = [
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "_lithiumReservoir",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "constructor"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "crowned",
-                        "type": "address"
-                    }
-                ],
-                "name": "CrownUpdated",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": false,
-                        "internalType": "string",
-                        "name": "side",
-                        "type": "string"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "uint256",
-                        "name": "firearms",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "FirearmGained",
-                "type": "event"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "string",
-                        "name": "side",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "giveLithium",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": true,
-                        "internalType": "address",
-                        "name": "user",
-                        "type": "address"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "string",
-                        "name": "side",
-                        "type": "string"
-                    },
-                    {
-                        "indexed": false,
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "LithiumGiven",
-                "type": "event"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "string",
-                        "name": "side",
-                        "type": "string"
-                    }
-                ],
-                "name": "nuke",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {
-                        "indexed": false,
-                        "internalType": "string",
-                        "name": "side",
-                        "type": "string"
-                    }
-                ],
-                "name": "Nuked",
-                "type": "event"
-            },
-            {
-                "inputs": [],
-                "name": "crowned",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "czarFirearms",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "name": "czarLithium",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "lastContributor",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "lithiumReservoir",
-                "outputs": [
-                    {
-                        "internalType": "contract LithiumReservoir",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "nuked",
-                "outputs": [
-                    {
-                        "internalType": "bool",
-                        "name": "",
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "nukeHolder",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "ratFirearms",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "name": "ratLithium",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "name": "userLithiumContribution",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            }
-        ]
-
-
-        const lithiumReservoirAddress = "0x677932f795E08a8e8525a0f0F7042498de2b55D9"; // Replace with your LithiumReservoir.sol contract address
-        const worldWarRatAddress = "0x2b14e3Ad91351CaDca3Caf12272A3c70F89D50FC"; // Replace with your WorldWarRat.sol contract address
-
+        const lithiumReservoirAddress = "0x677932f795E08a8e8525a0f0F7042498de2b55D9";
         let provider;
         let signer;
-        let lithiumReservoirContract;
-        let worldWarRatContract;
-
-        // Variables to manage counts
         let lithiumCount = 0;
-        let czarLithium = 0;
         let citLithium = 0;
-        let worldWarRatCount = 0; // Example variable for WorldWarRat.sol
+        let czarLithium = 0;
 
-        // DOM Elements
         const connectWalletButton = document.getElementById('connectWallet');
         const connectSection = document.getElementById('connectSection');
-        const mainContent = document.querySelector('main');
-        const strawButtons = document.querySelectorAll('.straw-button');
+        const connectedAddressDiv = document.getElementById('connectedAddress');
+        const userAddressSpan = document.getElementById('userAddress');
         const lithiumCountDisplay = document.getElementById('lithiumCount');
-        const lithiumImage = document.getElementById('lithiumImage');
-        const ratCzar = document.getElementById('ratCzar');
-        const czarLithiumDisplay = document.getElementById('czarLithium');
-        const citizenButton = document.getElementById('citizenButton');
         const citLithiumDisplay = document.getElementById('citLithium');
+        const czarLithiumDisplay = document.getElementById('czarLithium');
         const messagesDiv = document.getElementById('messages');
 
         // Function to hide connect section after connection
         function hideConnectSection() {
             connectSection.classList.add('hidden');
+            connectedAddressDiv.classList.remove('hidden');
         }
 
         // Function to show messages
@@ -801,37 +254,11 @@
             messagesDiv.innerText = message;
             setTimeout(() => {
                 messagesDiv.innerText = "";
-            }, 3000);
+            }, 5000);
         }
 
         // Function to show Lithium Pop Animation
         function showLithiumPop() {
-            // Create Lithium Image Pop
-            const popImg = document.createElement('img');
-            popImg.src = 'lithium.png'; // Ensure this path is correct
-            popImg.alt = 'Lithium Pop';
-            popImg.style.position = 'absolute';
-            popImg.style.top = '50%';
-            popImg.style.left = '50%';
-            popImg.style.transform = 'translate(-50%, -50%)';
-            popImg.style.width = '100px';
-            popImg.style.height = '100px';
-            popImg.style.opacity = '0';
-            popImg.style.transition = 'opacity 0.5s ease';
-            popImg.style.zIndex = '5';
-            document.body.appendChild(popImg);
-
-            // Fade In
-            setTimeout(() => {
-                popImg.style.opacity = '1';
-            }, 100);
-
-            // Remove after 3 seconds
-            setTimeout(() => {
-                popImg.remove();
-            }, 3000);
-
-            // Show "Yay lithium!" Message
             showMessage("Yay lithium!");
         }
 
@@ -839,16 +266,16 @@
         async function connectWallet() {
             if (window.ethereum) {
                 try {
-                    provider = new ethers.BrowserProvider(window.ethereum); // Updated Provider Initialization
-                    await provider.send("eth_requestAccounts", []); // Request account access
-                    signer = await provider.getSigner(); // Updated Signer Initialization
-
-                    // Initialize Contracts
-                    lithiumReservoirContract = new ethers.Contract(lithiumReservoirAddress, lithiumReservoirABI, signer);
-                    worldWarRatContract = new ethers.Contract(worldWarRatAddress, worldWarRatABI, signer);
+                    provider = new ethers.BrowserProvider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []);
+                    signer = await provider.getSigner();
 
                     hideConnectSection();
                     showMessage("Wallet connected!");
+
+                    const userAddress = await signer.getAddress();
+                    userAddressSpan.innerText = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
+
                 } catch (error) {
                     console.error("Error connecting to MetaMask:", error);
                     alert("Failed to connect to MetaMask.");
@@ -858,155 +285,64 @@
             }
         }
 
-        // Function to check if already connected on page load
-        async function checkIfConnected() {
-            if (window.ethereum) {
-                try {
-                    provider = new ethers.BrowserProvider(window.ethereum); // Updated Provider Initialization
-                    const accounts = await provider.send("eth_accounts", []);
-                    if (accounts.length > 0) {
-                        signer = await provider.getSigner(); // Updated Signer Initialization
-
-                        // Initialize Contracts
-                        lithiumReservoirContract = new ethers.Contract(lithiumReservoirAddress, lithiumReservoirABI, signer);
-                        worldWarRatContract = new ethers.Contract(worldWarRatAddress, worldWarRatABI, signer);
-
-                        hideConnectSection();
-                        showMessage("Wallet connected!");
-                    }
-                } catch (error) {
-                    console.error("Error checking connection:", error);
-                }
-            }
+        // Increment lithium count on straw-button click
+        function incrementLithiumCount() {
+            lithiumCount += 1;
+            updateLithiumCount();
+            showLithiumPop();
         }
 
-        // Event Listeners
-        connectWalletButton.addEventListener('click', connectWallet);
-
-        // Functionality for Straw Buttons
-        async function handleStrawClick() {
-            if (!lithiumReservoirContract) {
-                alert("Please connect your MetaMask wallet first.");
-                return;
-            }
-            try {
-                const tx = await lithiumReservoirContract.straw();
-                await tx.wait();
-                lithiumCount += 1;
-                updateLithiumCount();
-                showLithiumPop();
-            } catch (error) {
-                console.error("Error interacting with straw:", error);
-                alert("Transaction failed. See console for details.");
-            }
-        }
-
-        strawButtons.forEach(button => {
-            button.addEventListener('click', handleStrawClick);
-        });
-
-        // Functionality for Rat Czar
-        async function handleRatCzarClick() {
-            if (!lithiumReservoirContract) {
-                alert("Please connect your MetaMask wallet first.");
-                return;
-            }
-            if (lithiumCount >= 1) {
-                try {
-                    const tx = await lithiumReservoirContract.ratCzar();
-                    await tx.wait();
-                    czarLithium += 1;
-                    updateCzarLithium();
-                    lithiumCount -= 1;
-                    updateLithiumCount();
-                    showMessage("Czar Lithium increased!");
-                } catch (error) {
-                    console.error("Error interacting with ratCzar:", error);
-                    alert("Transaction failed. See console for details.");
-                }
-            } else {
-                alert("Not enough Lithium Count.");
-            }
-        }
-
-        ratCzar.addEventListener('click', handleRatCzarClick);
-
-        // Functionality for Citizen
-        async function handleCitizenClick() {
-            if (!lithiumReservoirContract) {
-                alert("Please connect your MetaMask wallet first.");
-                return;
-            }
-            if (lithiumCount >= 1) {
-                try {
-                    const tx = await lithiumReservoirContract.citizen();
-                    await tx.wait();
-                    citLithium += 1;
-                    updateCitLithium();
-                    lithiumCount -= 1;
-                    updateLithiumCount();
-                    showMessage("Citizen Lithium increased!");
-                } catch (error) {
-                    console.error("Error interacting with citizen:", error);
-                    alert("Transaction failed. See console for details.");
-                }
-            } else {
-                alert("Not enough Lithium Count.");
-            }
-        }
-
-        citizenButton.addEventListener('click', handleCitizenClick);
-
-        // Example Functionality for WorldWarRat.sol
-        // You can add buttons or other UI elements to interact with WorldWarRat.sol as needed
-        // Example: Attack Button (Assuming you have an attack button in your HTML)
-        /*
-        const attackButton = document.getElementById('attackButton');
-        attackButton.addEventListener('click', async () => {
-            if (!worldWarRatContract) {
-                alert("Please connect your MetaMask wallet first.");
-                return;
-            }
-            try {
-                const tx = await worldWarRatContract.attack();
-                await tx.wait();
-                worldWarRatCount += 1;
-                // Update corresponding UI element
-                showMessage("You attacked the rats!");
-            } catch (error) {
-                console.error("Error interacting with attack:", error);
-                alert("Transaction failed. See console for details.");
-            }
-        });
-        */
-
-        // Update Display Functions
+        // Update lithium count display
         function updateLithiumCount() {
             lithiumCountDisplay.innerText = `Lithium Count: ${lithiumCount}`;
         }
 
-        function updateCzarLithium() {
-            czarLithiumDisplay.innerText = `Czar Lithium: ${czarLithium}`;
-        }
-
+        // Update citLithium count display
         function updateCitLithium() {
             citLithiumDisplay.innerText = `Citizen Lithium: ${citLithium}`;
         }
 
-        // Reset lithiumCount every 24 hours
-        setInterval(() => {
-            lithiumCount = 0;
-            updateLithiumCount();
-            showMessage("Lithium Count has been reset!");
-        }, 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+        // Update czarLithium count display
+        function updateCzarLithium() {
+            czarLithiumDisplay.innerText = `Czar Lithium: ${czarLithium}`;
+        }
 
-        // Initial Display Update
-        updateLithiumCount();
-        updateCzarLithium();
-        updateCitLithium();
+        // Function to handle citizenButton click
+        function handleCitizenClick() {
+            if (lithiumCount > 0) {
+                lithiumCount -= 1;
+                citLithium += 1;
+                updateLithiumCount();
+                updateCitLithium();
+                showMessage("Citizen Lithium increased by 1!");
+            } else {
+                showMessage("Not enough lithium to give to Citizen!");
+            }
+        }
 
-        // Check if already connected on page load
-        window.addEventListener('load', checkIfConnected);
+        // Function to handle ratCzar click
+        function handleCzarClick() {
+            if (lithiumCount > 0) {
+                lithiumCount -= 1;
+                czarLithium += 1;
+                updateLithiumCount();
+                updateCzarLithium();
+                showMessage("Czar Lithium increased by 1!");
+            } else {
+                showMessage("Not enough lithium to give to Czar!");
+            }
+        }
+
+        // Add event listeners to all straw buttons for incrementing lithium count
+        document.querySelectorAll('.straw-button').forEach(button => {
+            button.addEventListener('click', incrementLithiumCount);
+        });
+
+        // Event listeners for citizenButton and ratCzar
+        document.getElementById('citizenButton').addEventListener('click', handleCitizenClick);
+        document.getElementById('ratCzar').addEventListener('click', handleCzarClick);
+
+        connectWalletButton.addEventListener('click', connectWallet);
     </script>
 </body>
 

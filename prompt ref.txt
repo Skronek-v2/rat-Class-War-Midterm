@@ -1,0 +1,48 @@
+
+ Pge IDs 
+
+ "citizenButton"
+ "ratCzar"
+ "entity" //for rat citizen
+ "straw-section" //straw
+ "nukeSection"
+ "giveAmount"
+ "claimLithium"
+ "nukeSection"
+ "Lithium"
+ "czarLithium"
+ "citLithium"
+
+ 
+ 
+ show icon “Ear of Rice” U+1F33E,  as image button for "straw-section"
+ display buttons for "citizenButton" and "ratCzar" on equal line. make image "ratCzar"  110% size of "citizenButton"
+ display value  "citLithium" below "citizenButton". display value for "czarLithium" below.
+ after "submitGive" dispaly message "
+
+ Make button for connecting metawallet disaparre after connection. 
+
+ show 8 buttons of "straw-section". make them buttons. below display text "Collect straw to earn lithium!"
+
+
+
+
+
+. Show image form"Lithium"  in top right,  Show  "lithiumCountDisplay" below “lithium”
+When user clicks variable “straw” increase ‘lithiumCount’ by one. Reset “lithiumCount” to 0 every 24 hours. 
+When user clicks ‘straw; Show ‘lithium.png’, name variable “lithiumPop”,  and show message “Yay lithium!”. 
+On page show “ratCzar.png”, name variable ‘ratCzar’
+On page show emoji icon ‘Mouse’ U+1F401 , name variable ‘citizen’.
+Show variable count “czarLithium” and “citLithium”
+If user’s “lithiumCount” is 1 or greater, and  clicks ‘ratCzar’ increase “czarLithium” by 1. 
+If user’s “lithiumCount” is 1 or greater, and clicks ‘ ‘citizen’  increase “citLithium” by 1. 
+
+align "ratCzar" and "citizen" images to middle of page with their corresponding status counts below them. 
+align lithium image and count to top left of page 
+
+
+
+
+
+
+
